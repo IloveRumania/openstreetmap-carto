@@ -1,15 +1,14 @@
 # This is the input for scripts/generate_road_colours.py
 
-# All road classes colours will be generated for, in order of importance
-# (biggest first).
+# All road classes colours will be generated for, in order of importance (biggest first).
 roads:
   - motorway
   - trunk
   - primary
   - secondary
-
-# The starting and ending hue. The range goes from 0 to 360, with 0 and 360
-# representing red.
+  - tertiary
+  
+# The starting and ending hue. The range goes from 0 to 360, with 0 and 360 representing red.
 hue: [10, 106]
 
 # The lightness and chroma (also known as saturation) for each type of colour.
