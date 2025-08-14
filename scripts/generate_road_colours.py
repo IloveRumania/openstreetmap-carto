@@ -115,7 +115,7 @@ def main():
                 line = "@{name}-{line_name}: {rgb}; // {lch}, error {delta:.1f}"
             else:
                 line = "@{name}-{line_name}: {rgb};"
-            print((line.format(name = name, line_name=line_name, rgb = colour.rgb(), lch = colour.lch(), delta = colour.rgb_error())))
+            print(f"@{name}-{line_name}: {colour.rgb()};")
 
 if __name__ == "__main__":
     main()

@@ -4,9 +4,16 @@
 roads:
   - motorway
   - trunk
+  - trunk-expressway
   - primary
+  - primary-expressway
   - secondary
+  - secondary-expressway
   - tertiary
+  - tertiary-expressway
+
+generate_expressways: true
+
   
 # The starting and ending hue. The range goes from 0 to 360, with 0 and 360 representing red.
 hue: [10, 106]
@@ -32,6 +39,41 @@ classes:
     shield:
       lightness: [20, 25]
       chroma: [40, 42]
+    # Add expressway variants below, tweaking lightness/chroma to get desired effect
+trunk-expressway:
+  fill:
+    # 50% lighter than trunk fill: approx halfway between trunk fill lightness and 100
+    lightness: [85, 98]
+    chroma: [35, 29]
+  casing:
+    # 50% darker than trunk casing: approx halfway between trunk casing and 0
+    lightness: [25, 25]
+    chroma: [70, 55]
+
+primary-expressway:
+  fill:
+    lightness: [85, 98]
+    chroma: [35, 29]
+  casing:
+    lightness: [25, 25]
+    chroma: [70, 55]
+
+secondary-expressway:
+  fill:
+    lightness: [85, 98]
+    chroma: [35, 29]
+  casing:
+    lightness: [25, 25]
+    chroma: [70, 55]
+
+tertiary-expressway:
+  fill:
+    lightness: [85, 98]
+    chroma: [35, 29]
+  casing:
+    lightness: [25, 25]
+    chroma: [70, 55]
+
   # Colours used by the road shields script
   shield:
     fill:
