@@ -35,59 +35,73 @@ def load_settings():
     return yaml.safe_load(open('road-colors.yaml', 'r'))
 
 def generate_colours(settings, section):
-    """Generate colour ranges.
-
-    Arguments:
-    settings -- The settings loaded by load_settings.
-    section -- Which section of the settings under 'classes' to use. Typically
-               'mss' or 'shields'.
-    """
     road_classes = settings['roads']
-    colour_divisions = len(road_classes) - 1
-    hues = OrderedDict()
+    # How many classes define the spacing
+    lock_first = int(settings.get('lock_first', len(road_classes)))
+    lock_first = max(2, min(lock_first, len(road_classes)))  # clamp
 
     min_h = settings['hue'][0]
     max_h = settings['hue'][1]
 
-    delta_h = (max_h - min_h) / colour_divisions
+    # Use deltas from the locked-first range
+    base_divisions = lock_first - 1
+    base_delta_h = (max_h - min_h) / base_divisions
 
-    h = min_h
-    for name in road_classes:
-        hues[name] = h
-        h = (h + delta_h) % 360
-
-    # A class to hold information for each line
-    ColourInfo = namedtuple("ColourInfo", ["start_l", "end_l", "start_c", "end_c"])
-
-    line_colour_infos = OrderedDict()
-
-    # The lightness (l) and chroma (c; also known as saturation) for each type of colour.
-    # Lightness ranges from 0 to 100; dark to bright.
-    # Chroma ranges from 0 to 100 too; unsaturated to fully saturated.
-
-    # The higher the road classification, the higher its saturation. Conversely,
-    # the roads get brighter towards the lower end of the classification.
-
+    # Build per-line (fill/casing/…) L/C deltas from locked range
     classes = settings['classes'][section]
+    from collections import OrderedDict, namedtuple
+    ColourInfo = namedtuple("ColourInfo", ["start_l", "end_l", "start_c", "end_c"])
+    line_colour_infos = OrderedDict()
     for cls, params in sorted(classes.items()):
         l = params['lightness']
         c = params['chroma']
-        line_colour_infos[cls] = ColourInfo(start_l = l[0], end_l = l[1], start_c = c[0], end_c = c[1])
+        line_colour_infos[cls] = ColourInfo(start_l=l[0], end_l=l[1], start_c=c[0], end_c=c[1])
 
-    # Colours for the MSS
+    # Precompute step deltas (locked)
+    def locked_step(value_start, value_end):
+        return (value_end - value_start) / base_divisions
+
+    step_info = {}
+    for line_name, info in line_colour_infos.items():
+        step_info[line_name] = {
+            'L0': info.start_l,
+            'C0': info.start_c,
+            'dL': locked_step(info.start_l, info.end_l),
+            'dC': locked_step(info.start_c, info.end_c),
+        }
+
+    # Now produce colours for all classes by extrapolating beyond lock_first
+    from collections import OrderedDict
+    hues = OrderedDict()
+    for i, name in enumerate(road_classes):
+        if i == 0:
+            hues[name] = min_h
+        elif i < lock_first:
+            hues[name] = (min_h + i * base_delta_h) % 360
+        else:
+            # extend with the same step
+            hues[name] = (hues[road_classes[i-1]] + base_delta_h) % 360
+
     colours = OrderedDict()
-
-    for line_name, line_colour_info in line_colour_infos.items():
-        c = line_colour_info.start_c
-        delta_c = (line_colour_info.end_c - line_colour_info.start_c) / colour_divisions
-        l = line_colour_info.start_l
-        delta_l = (line_colour_info.end_l - line_colour_info.start_l) / colour_divisions
-
+    for line_name, info in line_colour_infos.items():
         colours[line_name] = OrderedDict()
-        for name in road_classes:
-            colours[line_name][name] = Color((l, c, hues[name]))
-            c += delta_c
-            l += delta_l
+        for i, name in enumerate(road_classes):
+            if i < lock_first:
+                L = step_info[line_name]['L0'] + i * step_info[line_name]['dL']
+                C = step_info[line_name]['C0'] + i * step_info[line_name]['dC']
+            else:
+                # extend with same step beyond the locked range
+                L = step_info[line_name]['L0'] + (lock_first - 1) * step_info[line_name]['dL'] \
+                    + (i - (lock_first - 1)) * step_info[line_name]['dL']
+                C = step_info[line_name]['C0'] + (lock_first - 1) * step_info[line_name]['dC'] \
+                    + (i - (lock_first - 1)) * step_info[line_name]['dC']
+
+            # Optional: gently clamp L and C to valid ranges
+            L = max(0, min(100, L))
+            C = max(0, min(100, C))
+
+            colour = Color((L, C, hues[name]))
+            colours[line_name][name] = colour
 
     return colours
 
