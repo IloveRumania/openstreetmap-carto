@@ -297,6 +297,30 @@
 @mini-roundabout-width:           4;
 @turning-circle-factor:           1.6;
 
+@motorway-overlay-width-z9:  0.8;
+@motorway-overlay-width-z10: 1.0;
+@motorway-overlay-width-z11: 1.0;
+@motorway-overlay-width-z12: 1.1;
+@motorway-overlay-width-z13: 1.2;
+@motorway-overlay-width-z14: 1.3;
+@motorway-overlay-width-z15: @motorway-width-z15 / 4.0;
+@motorway-overlay-width-z16: @motorway-width-z17 / 4.0;
+@motorway-overlay-width-z17: @motorway-width-z18 / 4.0;
+@motorway-overlay-width-z18: @motorway-width-z18 / 4.0;
+@motorway-overlay-width-z19: @motorway-width-z19 / 4.0;
+
+@expressway-overlay-width-z9: @motorway-overlay-width-z9 - (0.3);
+@expressway-overlay-width-z10: @motorway-overlay-width-z10 - (0.3);
+@expressway-overlay-width-z11: @motorway-overlay-width-z11 - (0.3);
+@expressway-overlay-width-z12: @motorway-overlay-width-z12;
+@expressway-overlay-width-z13: @motorway-overlay-width-z13;
+@expressway-overlay-width-z14: @motorway-overlay-width-z14;
+@expressway-overlay-width-z15: @motorway-overlay-width-z15;
+@expressway-overlay-width-z16: @motorway-overlay-width-z16;
+@expressway-overlay-width-z17: @motorway-overlay-width-z17;
+@expressway-overlay-width-z18: @motorway-overlay-width-z18;
+@expressway-overlay-width-z19: @motorway-overlay-width-z19;
+
 @junction-text-color:             #960000;
 @halo-color-for-minor-road:       white;
 @lowzoom-halo-color:              white;
@@ -2847,6 +2871,53 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
         line-width: 1.5;
         line-color: #999;
       }
+    }
+  }
+}
+
+/* Overlay for motorway=yes and expressway=yes roads */
+::overlay {
+  /* ===== MOTORWAY OVERLAY ===== */
+  [motorway = 'yes'],
+  [motorway_link = 'yes'] {
+    [zoom >= 9] {
+      line-width:  @motorway-overlay-width-z9;
+      [zoom >= 10] { line-width: @motorway-overlay-width-z10; }
+      [zoom >= 11] { line-width: @motorway-overlay-width-z11; }
+      [zoom >= 12] { line-width: @motorway-overlay-width-z12; }
+      [zoom >= 13] { line-width: @motorway-overlay-width-z13; }
+      [zoom >= 14] { line-width: @motorway-overlay-width-z14; }
+      [zoom >= 15] { line-width: @motorway-overlay-width-z15; }
+      [zoom >= 16] { line-width: @motorway-overlay-width-z16; }
+      [zoom >= 17] { line-width: @motorway-overlay-width-z17; }
+      [zoom >= 18] { line-width: @motorway-overlay-width-z18; }
+      [zoom >= 19] { line-width: @motorway-overlay-width-z19; }
+
+      line-color: #E892A2;        /* Pinkish color */
+      line-cap: round;
+      line-join: round;
+    }
+  }
+
+  /* ===== EXPRESSWAY OVERLAY ===== */
+  [expressway = 'yes'],
+  [expressway_link = 'yes'] {
+    [zoom >= 9] {
+      line-width:  @expressway-overlay-width-z9;
+      [zoom >= 10] { line-width: @expressway-overlay-width-z10; }
+      [zoom >= 11] { line-width: @expressway-overlay-width-z11; }
+      [zoom >= 12] { line-width: @expressway-overlay-width-z12; }
+      [zoom >= 13] { line-width: @expressway-overlay-width-z13; }
+      [zoom >= 14] { line-width: @expressway-overlay-width-z14; }
+      [zoom >= 15] { line-width: @expressway-overlay-width-z15; }
+      [zoom >= 16] { line-width: @expressway-overlay-width-z16; }
+      [zoom >= 17] { line-width: @expressway-overlay-width-z17; }
+      [zoom >= 18] { line-width: @expressway-overlay-width-z18; }
+      [zoom >= 19] { line-width: @expressway-overlay-width-z19; }
+
+      line-color: #F6E856;        /* Yellow color */
+      line-cap: round;
+      line-join: round;
     }
   }
 }
