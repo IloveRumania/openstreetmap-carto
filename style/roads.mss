@@ -29,6 +29,9 @@
 @access-marking-white-unpaved: #e0e0e0;
 @access-marking-living-street: #d4d4d4;
 
+@motorway-overlay:#E892A2;
+@expressway-overlay:#f6e856;
+
 @default-casing: white;
 @tertiary-casing: #8f8f8f;
 @residential-casing: #bbb;
